@@ -43,6 +43,7 @@ body::before {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transform: translateY(10px);
 }
 
 .board-wrapper {
@@ -123,7 +124,7 @@ body::before {
 }
 
 .launch-btn {
-    margin-top: 30px;
+    margin-top: 12px;  /* reduced from 30px */
     padding: 14px 45px;
     background: linear-gradient(145deg,#0a6e32,#0e8f40);
     color: white;
@@ -134,7 +135,6 @@ body::before {
     border: 2px solid #fff;
 }
 .launch-btn:hover { background: #28b561 ; }
-/* ================= CURTAIN ================= */
 
 #curtain-container {
     position: fixed;
@@ -170,8 +170,6 @@ body::before {
     object-fit: cover;
 }
 
-/* ================= VIDEO PLAYER ================= */
-
 #videoWrapper {
     position: fixed;
     inset: 0;
@@ -185,8 +183,6 @@ body::before {
     height: 100vh;
     object-fit: contain;
 }
-
-/* ================= CONFETTI ================= */
 
 .confetti-piece {
     position: fixed;
@@ -299,8 +295,6 @@ function triggerConfettiOnly() {
     requestAnimationFrame(step);
 }
 
-/* LAUNCH FLOW (UPDATED WITH SMOOTH FADE) */
-
 $("#playVideo").click(function(e){
 
     e.preventDefault();
@@ -315,14 +309,11 @@ $("#playVideo").click(function(e){
     $("#curtain-left").animate({ left: "-50vw" }, 3000);
     $("#curtain-right").animate({ right: "-50vw" }, 3000, function(){
 
-        // Smooth fade intro background
         $("#introBg").css("opacity","0");
 
-        // Show image first
         $("#imageWrapper").fadeIn(800);
         triggerConfettiOnly();
-        
-        // After 5 seconds, switch to video
+  
         setTimeout(function(){
             $("#imageWrapper").fadeOut(500, function(){
                 $("#videoWrapper").fadeIn(500);
