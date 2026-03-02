@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>2Inauguration | MRPL</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<style>
+
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+}
+
+#introBg {
+    position: fixed;
+    inset: 0;
+    background: url('ChatGPT Image Feb 28, 2026, 02_57_16 PM.png') center/cover no-repeat;
+    z-index: 1;
+    transition: opacity 1.5s ease;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(5,15,30,0.75);
+    z-index: 2;
+}
+
+.board-section {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.board-wrapper {
+    position: relative;
+    width: 75vw;
+    max-width: 1150px;
+    padding: 18px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #c0c0c0, #808080, #a9a9a9, #e8e8e8);
+    box-shadow: inset 0 1px 0 0 #ffffff, inset 0 -1px 0 0 #000000, 0 0 40px rgba(128, 128, 128, 0.8), 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.board-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.6), inset 0 -1px 3px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.board {
+    background: linear-gradient(135deg,#F6F1E4,#E9DFC8);
+    border-radius: 8px;
+    padding: 45px 30px;
+    color: white;
+}
+
+.board-logo img { width: 90px; margin-bottom: 20px; }
+
+.board-title {
+    font-size: 40px;
+    font-weight: 800;
+    color: #0a6e32;
+    letter-spacing: 3px;
+}
+
+.board-subtitle {
+    font-size: 24px;
+    margin: 8px 0 30px 0;
+    letter-spacing: 3px;
+    color: #0a6e32;
+}
+
+.inaugurated { font-size: 18px; color: #0a6e32}
+.post { font-size: 20px; font-weight: 700;color: #0a6e32; }
+
+.dignitary-section {
+    position: relative;
+    margin: 10px 0 25px 0;
+}
+
+.dignitary-name {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    color: #0a6e32;
+}
+
+.dignitary-image {
+    position: absolute;
+    right: 15%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #f5d97a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.board-datetime {
+    font-size: 18px;
+    color: #0a6e32;
+    font-weight: 600;
+}
+
+.launch-btn {
+    margin-top: 30px;
+    padding: 14px 45px;
+    background: linear-gradient(145deg,#0a6e32,#0e8f40);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 2px solid #fff;
+}
+.launch-btn:hover { background: #28b561 ; }
+/* ================= CURTAIN ================= */
+
+#curtain-container {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    display: none;
+}
+
+#curtain-left, #curtain-right {
+    position: absolute;
+    top: 0;
+    width: 50vw;
+    height: 100vh;
+    background-image: url('Red_Curtain.png');
+    background-size: cover;
+}
+
+#curtain-left { left: 0; }
+#curtain-right { right: 0; }
+
+/* ================= IMAGE REVEAL ================= */
+
+#imageWrapper {
+    position: fixed;
+    inset: 0;
+    display: none;
+    z-index: 3000;
+}
+
+#revealImage {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+}
+
+/* ================= VIDEO PLAYER ================= */
+
+#videoWrapper {
+    position: fixed;
+    inset: 0;
+    display: none;
+    z-index: 3000;
+    background: #000;
+}
+
+#revealVideo {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+}
+
+/* ================= CONFETTI ================= */
+
+.confetti-piece {
+    position: fixed;
+    width: 8px;
+    height: 10px;
+    border-radius: 2px;
+    z-index: 5000;
+}
+
+</style>
+</head>
+
+<body>
+<div id="introBg"></div>
+
+<audio id="clapAudio" loop>
+<source src="vvqne-applause-383901.mp3" type="audio/mp3">
+</audio>
+
+<div id="curtain-container">
+    <div id="curtain-left"></div>
+    <div id="curtain-right"></div>
+</div>
+
+<div class="board-section" id="mainContent">
+
+    <div class="board-wrapper">
+        <div class="board">
+
+            <div class="board-logo">
+                <img src="MRPL_official_Logo.png">
+            </div>
+
+            <div class="board-title">SECURITY INFRASTRUCTURE AT MRPL</div>
+            <div class="board-subtitle">INAUGURATION</div>
+
+            <div class="inaugurated">Inaugurated By</div>
+            <div class="post">HON'BLE (POST)</div>
+            <div class="dignitary-section">
+                <div class="dignitary-name">NAME OF THE DIGNITARY</div>
+                <img src="Shri Mundkur Shyamprasad Kamath.png" alt="Dignitary" class="dignitary-image">
+            </div>
+            <div class="board-datetime">(DATE) 2026 | (TIME) AM</div>
+
+        </div>
+    </div>
+
+    <a href="#" class="launch-btn" id="playVideo">LAUNCH</a>
+
+</div>
+
+<div id="imageWrapper">
+    <img id="revealImage" src="MRPL_Security_Infrastructure_Bottom_2560x1440.png">
+</div>
+
+<div id="videoWrapper">
+    <video id="revealVideo" controls autoplay>
+        <source src="" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<script>
+
+
+function triggerConfettiOnly() {
+    const particles = [];
+    function makeConfetti() {
+        const el = document.createElement("div");
+        el.className = "confetti-piece";
+        el.style.background = `hsl(${Math.random()*360},80%,55%)`;
+        el.style.left = Math.random()*window.innerWidth + "px";
+        el.style.top = window.innerHeight - 20 + "px";
+        document.body.appendChild(el);
+        const vx = (Math.random() - 0.5) * 400;
+        const vy = -(600 + Math.random()*400);
+        const gravity = 900;
+        const life = 2 + Math.random();
+
+        particles.push({ el, x: parseFloat(el.style.left), y: window.innerHeight-20, vx, vy, gravity, life, age: 0 });
+    }
+
+    for (let i = 0; i < 300; i++) makeConfetti();
+
+    let last = performance.now();
+
+    function step(now) {
+        const dt = (now-last)/1000;
+        last = now;
+
+        for (let i = particles.length-1; i>=0; i--) {
+            const p = particles[i];
+            p.vy += p.gravity*dt;
+            p.x += p.vx*dt;
+            p.y += p.vy*dt;
+            p.age += dt;
+
+            p.el.style.left = p.x+"px";
+            p.el.style.top = p.y+"px";
+
+            if (p.age > p.life) {
+                p.el.remove();
+                particles.splice(i, 1);
+            }
+        }
+
+        if (particles.length) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+}
+
+/* LAUNCH FLOW (UPDATED WITH SMOOTH FADE) */
+
+$("#playVideo").click(function(e){
+
+    e.preventDefault();
+
+    $("#mainContent").fadeOut(400);
+    $("#curtain-container").show();
+
+    const clap = document.getElementById("clapAudio");
+    clap.currentTime = 0;
+    clap.play().catch(()=>{});
+
+    $("#curtain-left").animate({ left: "-50vw" }, 3000);
+    $("#curtain-right").animate({ right: "-50vw" }, 3000, function(){
+
+        // Smooth fade intro background
+        $("#introBg").css("opacity","0");
+
+        // Show image first
+        $("#imageWrapper").fadeIn(800);
+        triggerConfettiOnly();
+        
+        // After 5 seconds, switch to video
+        setTimeout(function(){
+            $("#imageWrapper").fadeOut(500, function(){
+                $("#videoWrapper").fadeIn(500);
+                const video = document.getElementById("revealVideo");
+                video.play().catch(()=>{});
+            });
+        }, 5000);
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
