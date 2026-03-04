@@ -76,7 +76,7 @@ body::before {
 .board-logo img { width: 90px; margin-bottom: 20px; }
 
 .board-title {
-    font-size: 40px;
+    font-size: 30px;
     font-weight: 800;
     color: #0a6e32;
     letter-spacing: 3px;
@@ -95,6 +95,10 @@ body::before {
 .dignitary-section {
     position: relative;
     margin: 10px 0 25px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 .dignitary-name {
@@ -105,12 +109,8 @@ body::before {
 }
 
 .dignitary-image {
-    position: absolute;
-    right: 15%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 120px;
-    height: 140px;
+    width: 150px;
+    height: 200px;
     object-fit: cover;
     border-radius: 8px;
     border: 2px solid #f5d97a;
@@ -216,21 +216,21 @@ body::before {
                 <img src="MRPL_official_Logo.png">
             </div>
 
-            <div class="board-title">SECURITY INFRASTRUCTURE AT MRPL</div>
-            <div class="board-subtitle">INAUGURATION</div>
+            <div class="board-title">SECURITY INFRA UPGRADATION PROJECT</div>
+            <!-- <div class="board-subtitle">INAUGURATION</div> -->
 
             <div class="inaugurated">Inaugurated By</div>
-            <div class="post">HON'BLE (POST)</div>
+            <!-- <div class="post">HON'BLE (POST)</div> -->
             <div class="dignitary-section">
-                <div class="dignitary-name">NAME OF THE DIGNITARY</div>
-                <img src="Shri Mundkur Shyamprasad Kamath.png" alt="Dignitary" class="dignitary-image">
+                <img src="" alt="Dignitary" class="dignitary-image">
+                <div class="dignitary-name">{NAME OF THE DIGNITARY}</div>
             </div>
-            <div class="board-datetime">(DATE) 2026 | (TIME) AM</div>
+            <div class="board-datetime" id="liveDateTime"></div>
 
         </div>
     </div>
 
-    <a href="#" class="launch-btn" id="playVideo">LAUNCH</a>
+    <a href="#" class="launch-btn" id="playVideo" data-clap-start="0.5">LAUNCH</a>
 
 </div>
 
@@ -240,13 +240,23 @@ body::before {
 
 <div id="videoWrapper">
     <video id="revealVideo" controls autoplay>
-        <source src="" type="video/mp4">
+        <source src="MRPL_GoogleEarth2.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </div>
 
 <script>
 
+function updateDateTime() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateStr = now.toLocaleDateString('en-US', options);
+    // const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    document.getElementById('liveDateTime').textContent = dateStr; // `${dateStr} | ${timeStr}`
+}
+
+updateDateTime();
+// setInterval(updateDateTime, 1000); 
 
 function triggerConfettiOnly() {
     const particles = [];
@@ -301,26 +311,71 @@ $("#playVideo").click(function(e){
 
     $("#mainContent").fadeOut(400);
     $("#curtain-container").show();
+    // hide the background immediately so it doesn't flash during curtain opening
+    $("#introBg").hide();
 
+    // Play clap audio at a custom start time (seconds).
+    // Set the desired start in the `data-clap-start` attribute on the `#playVideo` element.
     const clap = document.getElementById("clapAudio");
-    clap.currentTime = 0;
-    clap.play().catch(()=>{});
+    const clapStartAttr = document.getElementById('playVideo').dataset.clapStart;
+    const clapStart = parseFloat(clapStartAttr);
+
+    function playClapAt(time) {
+        try {
+            if (!isNaN(time)) clap.currentTime = Math.max(0, time);
+        } catch (err) {
+            // setting currentTime may fail if metadata not loaded; ignore and fallback to start
+        }
+        clap.play().catch(()=>{});
+    }
+
+    if (clap.readyState >= 1) {
+        playClapAt(isNaN(clapStart) ? 0 : clapStart);
+    } else {
+        clap.addEventListener('loadedmetadata', function(){
+            playClapAt(isNaN(clapStart) ? 0 : clapStart);
+        }, { once: true });
+        // also attempt to load in case it's not started
+        clap.load();
+    }
 
     $("#curtain-left").animate({ left: "-50vw" }, 3000);
     $("#curtain-right").animate({ right: "-50vw" }, 3000, function(){
 
-        $("#introBg").css("opacity","0");
+        $("#videoWrapper").fadeIn(500, function(){
+            const video = document.getElementById("revealVideo");
 
-        $("#imageWrapper").fadeIn(800);
-        triggerConfettiOnly();
-  
-        setTimeout(function(){
-            $("#imageWrapper").fadeOut(500, function(){
-                $("#videoWrapper").fadeIn(500);
-                const video = document.getElementById("revealVideo");
+            video.play().catch(()=>{
+                video.muted = true;
                 video.play().catch(()=>{});
             });
-        }, 5000);
+
+            video.onended = function(){
+                $("#videoWrapper").fadeOut(400, function(){
+                    $("#imageWrapper").fadeIn(800);
+                    triggerConfettiOnly();
+                });
+            };
+
+            video.onerror = function(){
+                $("#videoWrapper").hide();
+                $("#imageWrapper").fadeIn(800);
+                triggerConfettiOnly();
+            };
+            
+            setTimeout(function(){
+                if (video.paused && !video.ended) {
+                    // try a last attempt to play muted
+                    video.muted = true;
+                    video.play().catch(function(){
+                        $("#videoWrapper").fadeOut(200, function(){
+                            $("#imageWrapper").fadeIn(800);
+                            triggerConfettiOnly();
+                        });
+                    });
+                }
+            }, 3000);
+        });
 
     });
 
